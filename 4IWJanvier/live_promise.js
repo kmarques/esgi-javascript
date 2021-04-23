@@ -62,5 +62,6 @@ const timer = function () {
 };
 
 Promise.race([mapping(), timer()])
+  .then((results) => console.log(results))
   .then(() => console.log("Merge OK"))
   .catch(() => console.log("Timeout"));
