@@ -2,12 +2,11 @@
 
 ## Règles
 
-- 3 personnes par groupes maximum
+- 3/4 personnes par groupes maximum
 - Groupement libre
-- Soumission sur Github 1 lien/groupe: github.com/user/esgi-javascript/project
-- Sujet libre soumis à validation
-	- sujet proposé: Créer un mini-react
-		- Gestion du routage
+- Soumission sur Github 1 lien/groupe
+- Sujet proposé: Créer un mini-react
+		- Gestion du routage (<==> Changement de page sans reload)
 		- Validation des propriétés passées au composant
 		- Algorithme => se rapproche de l'algo de l'exercice *HereWeGo!*
 			- Chaque composant hérite d'un object `Component` ayant une méthode `display(newProps)`
@@ -33,12 +32,12 @@ Notions présentes:
 		-  `machaine = "Type d'animal: {{ type.name }}"`
 		- `animal = {type: {name: "chien"}}`
 		- `machaine.interpolate(animal)  => "Type d'animal: chien"`
-- Création d'objet et objet hérité dont certains avec attributs/méthodes privés
+- Création d'objet et objet hérité
 - Création de modules
 - Gestion de l'historique (système de routage)
 - Utilisation des Promises
 - Utilisation du type_checker
-	- version minimum: 2
+	- version minimum: 3
 	- exemples cas d'utilisation: Vérifier les données en entrée de constructeur 
 
 Contenu index.html:
@@ -56,7 +55,7 @@ Contenu index.html:
 ## Interdictions
 
 - Utilisation de task-runners
-- Utilisation de Framework (React, Angular, VueJS, ...)
+- Utilisation de packages (lodash, jQuery, React, Angular, VueJS, ...)
 
 ## Evaluation
 
