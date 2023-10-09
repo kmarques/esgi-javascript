@@ -14,6 +14,10 @@ function textToInput(event) {
   input.addEventListener("blur", function (event) {
     const content = event.currentTarget.value;
     const td = event.currentTarget.parentNode;
+    // start backend
+    data[td.dataset.position] = content;
+    localStorage.setItem("data", JSON.stringify(data));
+    // end backend
     const contentNode = document.createTextNode(content);
     td.replaceChild(contentNode, event.currentTarget);
     td.addEventListener("click", textToInput);
@@ -52,6 +56,8 @@ root.appendChild(table);
 //root.appendChild(button);
 //root.appendChild(inputFile);
 //
+
+const data = JSON.parse(localStorage.getItem("data") || "{}");
 const page = {
   type: "table",
   props: {},
@@ -65,22 +71,25 @@ const page = {
         },
       },
       events: {},
-      children: Array.from({ length: 500 }, (_, indexTr) => ({
+      children: Array.from({ length: 12 }, (_, indexTr) => ({
         type: "tr",
         props: {},
         events: {},
-        children: Array.from({ length: 500 }, (_, indexTd) => ({
+        children: Array.from({ length: 12 }, (_, indexTd) => ({
           type: "td",
           props: {
             toto: "test",
+            "data-position": indexTr + "-" + indexTd,
           },
-          events: {},
+          events: {
+            click: [textToInput],
+          },
           children: [
             {
-              type: "img",
-              props: {
-                src: "https://picsum.photos/200?random="+(indexTr*indexTd),
-              },
+              type: "TEXT_NODE",
+              content:
+                data[indexTr + "-" + indexTd] ??
+                `Default ${indexTr} ${indexTd}`,
             },
           ],
         })),
@@ -89,11 +98,105 @@ const page = {
   ],
 };
 
+class Component {}
 
+class Button extends Component {
+  render() {
+    return {
+      type: "button",
+      props: {
+        style: {
+          "background-color": "red",
+        },
+        ...this.props,
+      },
+      events: {
+        click: [this.props.onClick],
+      },
+      children: [
+        {
+          type: "TEXT_NODE",
+          content: this.props.title,
+        },
+      ],
+    };
+  }
+}
+
+const MiniReact = {
+  createElement: function () {},
+};
+class Page2 extends Component {
+  constructor() {
+    super();
+    this.state = {
+      count: 0,
+    };
+  }
+
+  render() {
+    return {
+      type: "div",
+      props: {
+        style: {
+          "background-color": "green",
+        },
+      },
+      children: [
+        {
+          type: Button,
+          props: {
+            onClick: () => alert("Coucou"),
+            title: "Click me",
+          },
+        },
+        {
+          type: "h1",
+          props: {},
+          children: [
+            {
+              type: "TEXT_NODE",
+              content: "Counter: {{ state.count }}",
+            },
+          ],
+        },
+        {
+          type: Button,
+          props: {
+            onClick: () => this.setState({ count: this.state.count + 1 }),
+            title: "Count +1",
+          },
+        },
+      ],
+    };
+  }
+}
+
+const page2 = {
+  type: "div",
+  children: [
+    {
+      type: "TEXT_NODE",
+      content: "Coucou page2",
+    },
+  ],
+};
 
 const MiniReactDom = {
   render: function (rootElement, structure) {
-    rootElement.appendChild(this.renderStructure(structure));
+    const goToPage = () => {
+      const routes = {
+        "/page1": page,
+        "/page2": page2,
+      };
+      const path = location.hash.slice(1);
+      if(rootElement.childNodes.length) {
+        rootElement.replaceChild(this.renderStructure(routes[path]), rootElement.childNodes[0]);
+      } else 
+      rootElement.appendChild(this.renderStructure(routes[path]));
+    }
+    goToPage();
+    window.onhashchange = goToPage;
   },
   renderStructure: function generateDom(structure) {
     let element;
@@ -107,6 +210,9 @@ const MiniReactDom = {
       for (const propName in structure.props) {
         if (propName === "style") {
           Object.assign(element.style, structure.props[propName]);
+        } else if (propName.startsWith("data-")) {
+          element.dataset[propName.replace("data-", "")] =
+            structure.props[propName];
         } else {
           element.setAttribute(propName, structure.props[propName]);
         }
