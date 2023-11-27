@@ -1,12 +1,13 @@
 const BrowserRouter = function (routes, rootElement) {
   const generatePage = () => {
     const path = location.pathname;
+    const structure = routes[path] ?? routes["*"];
     if (rootElement.childNodes.length) {
       rootElement.replaceChild(
-        this.renderStructure(routes[path]),
+        this.renderStructure(structure),
         rootElement.childNodes[0]
       );
-    } else rootElement.appendChild(this.renderStructure(routes[path]));
+    } else rootElement.appendChild(this.renderStructure(structure));
   };
   generatePage();
   const oldPushState = history.pushState;
