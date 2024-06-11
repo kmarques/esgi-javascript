@@ -45,10 +45,24 @@ function Page1() {
 
 function Page404() {
   const h1 = document.createElement("h1");
+
   const title = document.createTextNode("Page 404");
+  h1.appendChild(BrowserLink("Page 1", "/page1"));
   h1.appendChild(title);
 
   return h1;
+}
+
+function BrowserLink(title, url) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.appendChild(document.createTextNode(title));
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.history.pushState({}, null, e.currentTarget.getAttribute("href"));
+    window.dispatchEvent(new Event("pushstate"));
+  });
+  return a;
 }
 
 const root = document.getElementById("root");
@@ -72,4 +86,28 @@ function HashRouter(rootElement, routes) {
   });
 }
 
-HashRouter(root, routes);
+function BrowserRouter(rootElement, routes) {
+  function managePath() {
+    const currentPath = window.location.pathname;
+    const elementGenerator = routes[currentPath] ?? routes["*"];
+    const elem = elementGenerator();
+    return elem;
+  }
+
+  rootElement.appendChild(managePath());
+
+  window.addEventListener("popstate", function () {
+    rootElement.replaceChild(managePath(), rootElement.childNodes[0]);
+  });
+  window.addEventListener("pushstate", function () {
+    rootElement.replaceChild(managePath(), rootElement.childNodes[0]);
+  });
+
+  //const oldPushState = window.history.pushState;
+  //window.history.pushState = function (data, title, url) {
+  //  oldPushState.call(window.history, data, title, url);
+  //  window.dispatchEvent(new Event("popstate"));
+  //};
+}
+
+BrowserRouter(root, routes);
