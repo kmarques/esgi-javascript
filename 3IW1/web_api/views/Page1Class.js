@@ -1,3 +1,5 @@
+import { BrowserLink } from "../components/BrowserRouter";
+
 export default class Page1Class extends Component {
   state = {
     cellEdit: undefined,
@@ -30,35 +32,48 @@ export default class Page1Class extends Component {
 
   render() {
     return {
-      tag: "table",
+      tag: "div",
       children: [
         {
-          tag: "tbody",
-          children: Array.from({ length: MAX_TR }, (_, i) => ({
-            tag: "tr",
-            children: Array.from({ length: MAX_TD }, (_, j) => ({
-              tag: "td",
-              props: {
-                onClick:
-                  i === this.state.cellEdit?.i && j === this.state.cellEdit?.j
-                    ? null
-                    : () => this.textIntoInput(i, j),
-              },
-              children: [
-                i === this.state.cellEdit?.i && j === this.state.cellEdit?.j
-                  ? {
-                      tag: "input",
-                      props: {
-                        value: this.state.inputValue ?? "Default",
-                        onBlur: this.inputIntoText,
-                        onInput: (e) =>
-                          this.setState({ inputValue: e.target.value }),
-                      },
-                    }
-                  : this.state.data[`${i}.${j}`] ?? "Default",
-              ],
-            })),
-          })),
+          tag: BrowserLink,
+          props: {
+            path: "/page2",
+          },
+          children: ["Page 2"],
+        },
+        {
+          tag: "table",
+          children: [
+            {
+              tag: "tbody",
+              children: Array.from({ length: MAX_TR }, (_, i) => ({
+                tag: "tr",
+                children: Array.from({ length: MAX_TD }, (_, j) => ({
+                  tag: "td",
+                  props: {
+                    onClick:
+                      i === this.state.cellEdit?.i &&
+                      j === this.state.cellEdit?.j
+                        ? null
+                        : () => this.textIntoInput(i, j),
+                  },
+                  children: [
+                    i === this.state.cellEdit?.i && j === this.state.cellEdit?.j
+                      ? {
+                          tag: "input",
+                          props: {
+                            value: this.state.inputValue ?? "Default",
+                            onBlur: this.inputIntoText,
+                            onInput: (e) =>
+                              this.setState({ inputValue: e.target.value }),
+                          },
+                        }
+                      : this.state.data[`${i}.${j}`] ?? "Default",
+                  ],
+                })),
+              })),
+            },
+          ],
         },
       ],
     };
